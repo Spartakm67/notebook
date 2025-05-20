@@ -22,10 +22,23 @@ class BigCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
       child: Padding(
         padding: EdgeInsets.all(20.w),
-        child: Text(
-          '${pair.first} ${pair.second}'.toLowerCase(),
-          style: AppTextStyles.bigCardTextStyle(context),
-          semanticsLabel: "${pair.first} ${pair.second}",
+        child: AnimatedSize(
+          duration: Duration(milliseconds: 200),
+          child: MergeSemantics(
+            child: Wrap(
+              children: [
+                Text(
+                  pair.first,
+                  style: AppTextStyles.bigCardTextStyle(context),
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  pair.second,
+                  style: AppTextStyles.bigCardTextStyle(context),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
