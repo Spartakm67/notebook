@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notebook/theme/app_theme.dart';
 import 'package:notebook/theme/theme_service.dart';
-import 'package:notebook/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:notebook/presentation/screens/home_page.dart';
+import 'package:notebook/models/word_pair_wrapper.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  Hive.registerAdapter(WordPairWrapperAdapter());
+
+  await Hive.openBox<WordPairWrapper>('favoritesBox');
+  await Hive.openBox<WordPairWrapper>('historyBox');
+
   await ThemeService.init();
 
   runApp(

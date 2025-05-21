@@ -40,4 +40,37 @@ class AppTextStyles {
       color: theme.colorScheme.primary,
     );
   }
+
+  static TextStyle bottomNavSelectedLabelStyle(BuildContext context) {
+    final theme = _theme(context);
+    return theme.textTheme.labelMedium!.copyWith(
+      fontSize: 14.sp,
+      fontWeight: FontWeight.bold,
+      color: theme.colorScheme.primary,
+    );
+  }
+
+  static TextStyle bottomNavUnselectedLabelStyle(BuildContext context) {
+    final theme = _theme(context);
+    return theme.textTheme.labelMedium!.copyWith(
+      fontSize: 12.sp,
+      fontWeight: FontWeight.normal,
+      color: theme.disabledColor,
+    );
+  }
+
+  static IconThemeData bottomNavSelectedIconTheme(BuildContext context) {
+    return IconThemeData(
+      size: 26.sp,
+      color: Theme.of(context).colorScheme.primary,
+    );
+  }
+
+  static IconThemeData bottomNavUnselectedIconTheme(BuildContext context) {
+    return IconThemeData(
+      size: 20.sp,
+      color: Theme.of(context).disabledColor,
+    );
+  }
+
 }

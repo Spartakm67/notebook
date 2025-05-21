@@ -19,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var selectedIndex = 0;
+  final titles = ['Home', 'Favorites', 'Profile', 'Settings'];
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +48,11 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('NoteBook App', style: TextStyle(fontSize: 18.sp)),
+        title: Text(titles[selectedIndex], style: AppTextStyles.titleStyle(context)),
         actions: [
           IconButton(
             icon: Icon(
-              appState.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              appState.isDarkMode ? Icons.light_mode : Icons.dark_mode_sharp,
               size: 24.sp,
             ),
             onPressed: () {
@@ -79,6 +80,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                     currentIndex: selectedIndex,
+                    selectedLabelStyle: AppTextStyles.bottomNavSelectedLabelStyle(context),
+                    unselectedLabelStyle: AppTextStyles.bottomNavUnselectedLabelStyle(context),
+                    selectedIconTheme: AppTextStyles.bottomNavSelectedIconTheme(context),
+                    unselectedIconTheme: AppTextStyles.bottomNavUnselectedIconTheme(context),
                     onTap: (value) {
                       setState(() {
                         selectedIndex = value;
@@ -246,84 +251,3 @@ class _HistoryListViewState extends State<HistoryListView> {
 
 
 
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key});
-//
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-
-// class _HomePageState extends State<HomePage> {
-//   var selectedIndex = 0;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     var colorScheme = Theme.of(context).colorScheme;
-//
-//     var appState = context.watch<MyAppState>();
-//     Widget page;
-//     switch (selectedIndex) {
-//       case 0:
-//         page = GeneratorPage();
-//         break;
-//       case 1:
-//         page = FavoritesPage();
-//         break;
-//       default:
-//         throw UnimplementedError('no widget for $selectedIndex');
-//     }
-//
-//     return LayoutBuilder(
-//       builder: (context, constraints) {
-//         return Scaffold(
-//           appBar: AppBar(
-//             title: Text('NoteBook App', style: TextStyle(fontSize: 18.sp)),
-//             actions: [
-//               IconButton(
-//                 icon: Icon(
-//                   appState.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-//                   size: 24.sp,
-//                 ),
-//                 onPressed: () {
-//                   appState.toggleTheme();
-//                 },
-//               ),
-//             ],
-//           ),
-//           body: Row(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               SafeArea(
-//                 child: NavigationRail(
-//                   extended: constraints.maxWidth >= 600,
-//                   destinations: [
-//                     NavigationRailDestination(
-//                       icon: Icon(Icons.home, size: 20.sp),
-//                       label: Text('Home'),
-//                     ),
-//                     NavigationRailDestination(
-//                       icon: Icon(Icons.favorite, size: 20.sp),
-//                       label: Text('Favorites'),
-//                     ),
-//                   ],
-//                   selectedIndex: selectedIndex,
-//                   onDestinationSelected: (value) {
-//                     setState(() {
-//                       selectedIndex = value;
-//                     });
-//                   },
-//                 ),
-//               ),
-//               Expanded(
-//                 child: Container(
-//                   color: Theme.of(context).colorScheme.primaryContainer,
-//                   child: page,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
