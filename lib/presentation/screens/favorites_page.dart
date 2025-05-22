@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:notebook/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:notebook/main.dart';
+import 'package:notebook/state/my_app_state.dart';
+
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});

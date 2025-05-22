@@ -8,7 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:notebook/presentation/widgets/big_card.dart';
 import 'package:notebook/presentation/screens/favorites_page.dart';
-import 'package:notebook/main.dart';
+import 'package:notebook/state/my_app_state.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
