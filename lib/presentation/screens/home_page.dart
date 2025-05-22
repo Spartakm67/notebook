@@ -197,7 +197,9 @@ class HistoryListView extends StatefulWidget {
 class _HistoryListViewState extends State<HistoryListView> {
   /// Needed so that [MyAppState] can tell [AnimatedList] below to animate
   /// new items.
-  final _key = GlobalKey();
+  // final _key = GlobalKey();
+  final _key = GlobalKey<AnimatedListState>();
+
 
   /// Used to "fade out" the history items at the top, to suggest continuation.
   static const Gradient _maskingGradient = LinearGradient(

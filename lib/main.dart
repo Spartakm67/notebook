@@ -62,17 +62,28 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  var isDarkMode = ThemeService.getTheme();
-  var favorites = <WordPair>[];
-  var history = <WordPair>[];
+  final favoritesBox = Hive.box<WordPairWrapper>('favoritesBox');
+  final historyBox = Hive.box<WordPairWrapper>('historyBox');
 
-  GlobalKey? historyListKey;
+  WordPair current = WordPair.random();
+  bool isDarkMode = ThemeService.getTheme();
+
+  List<WordPair> favorites = [];
+  List<WordPair> history = [];
+
+  GlobalKey<AnimatedListState>? historyListKey;
+
+  MyAppState() {
+    _loadData();
+  }
+
+  void _loadData() {
+    favorites = favoritesBox.values.map((wp) => wp.toWordPair()).toList();
+    history = historyBox.values.map((wp) => wp.toWordPair()).toList();
+  }
 
   void getNext() {
-    history.insert(0, current);
-    var animatedList = historyListKey?.currentState as AnimatedListState?;
-    animatedList?.insertItem(0);
+    addToHistory(current);
     current = WordPair.random();
     notifyListeners();
   }
@@ -86,18 +97,95 @@ class MyAppState extends ChangeNotifier {
   void toggleFavorite([WordPair? pair]) {
     pair = pair ?? current;
     if (favorites.contains(pair)) {
-      favorites.remove(pair);
+      removeFavorite(pair);
     } else {
       favorites.add(pair);
+      favoritesBox.add(WordPairWrapper.fromWordPair(pair));
+      notifyListeners();
     }
-    notifyListeners();
   }
+
+  // void removeFavorite(WordPair pair) {
+  //   final index = favorites.indexOf(pair);
+  //   if (index != -1) {
+  //     favorites.removeAt(index);
+  //     final key = favoritesBox.keys.firstWhere(
+  //           (k) => favoritesBox.get(k)?.toWordPair() == pair,
+  //       orElse: () => null,
+  //     );
+  //     if (key != null) favoritesBox.delete(key);
+  //     notifyListeners();
+  //   }
+  // }
 
   void removeFavorite(WordPair pair) {
     favorites.remove(pair);
+
+    final keysToRemove = favoritesBox.keys.where((k) {
+      final saved = favoritesBox.get(k);
+      return saved?.toWordPair() == pair;
+    }).toList();
+
+    for (var key in keysToRemove) {
+      favoritesBox.delete(key);
+    }
+
+    notifyListeners();
+  }
+
+
+  void addToHistory(WordPair pair) {
+    history.insert(0, pair);
+    historyBox.add(WordPairWrapper.fromWordPair(pair));
+    historyListKey?.currentState?.insertItem(0);
+    notifyListeners();
+  }
+
+  void clearHistory() {
+    history.clear();
+    historyBox.clear();
     notifyListeners();
   }
 }
+
+
+// class MyAppState extends ChangeNotifier {
+//   var current = WordPair.random();
+//   var isDarkMode = ThemeService.getTheme();
+//   var favorites = <WordPair>[];
+//   var history = <WordPair>[];
+//
+//   GlobalKey? historyListKey;
+//
+//   void getNext() {
+//     history.insert(0, current);
+//     var animatedList = historyListKey?.currentState as AnimatedListState?;
+//     animatedList?.insertItem(0);
+//     current = WordPair.random();
+//     notifyListeners();
+//   }
+//
+//   void toggleTheme() {
+//     isDarkMode = !isDarkMode;
+//     ThemeService.saveTheme(isDarkMode);
+//     notifyListeners();
+//   }
+//
+//   void toggleFavorite([WordPair? pair]) {
+//     pair = pair ?? current;
+//     if (favorites.contains(pair)) {
+//       favorites.remove(pair);
+//     } else {
+//       favorites.add(pair);
+//     }
+//     notifyListeners();
+//   }
+//
+//   void removeFavorite(WordPair pair) {
+//     favorites.remove(pair);
+//     notifyListeners();
+//   }
+// }
 
 
 
