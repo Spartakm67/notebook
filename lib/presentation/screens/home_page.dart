@@ -1,3 +1,4 @@
+import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:notebook/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,13 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[selectedIndex], style: AppTextStyles.titleStyle(context)),
+        title: Text(
+          titles[selectedIndex] == 'Home'
+              ? '${titles[selectedIndex]} (всього вибрано: ${appState.history.length})'
+              : titles[selectedIndex],
+          style: AppTextStyles.titleStyle(context),
+        ),
+
         actions: [
           IconButton(
             icon: Icon(
@@ -227,25 +234,71 @@ class _HistoryListViewState extends State<HistoryListView> {
           final pair = appState.history[index];
           return SizeTransition(
             sizeFactor: animation,
-            child: Center(
-              child: TextButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite(pair);
-                },
-                icon: appState.favorites.contains(pair)
-                    ? Icon(Icons.favorite, size: 12)
-                    : SizedBox(),
-                label: Text(
-                  pair.asLowerCase,
-                  semanticsLabel: pair.asPascalCase,
-                ),
+            // child: Center(
+            //   child: TextButton.icon(
+            //     onPressed: () {
+            //       appState.toggleFavorite(pair);
+            //     },
+            //     icon: appState.favorites.contains(pair)
+            //         ? Icon(Icons.favorite, size: 12)
+            //         : SizedBox(),
+            //     label: Text(
+            //       pair.asLowerCase,
+            //       semanticsLabel: pair.asPascalCase,
+            //     ),
+            //   ),
+            // ),
+            child: Dismissible(
+              key: ValueKey(pair),
+              direction: DismissDirection.horizontal,
+              onDismissed: (_) {
+                appState.removeFromHistory(pair);
+                _key.currentState?.removeItem(
+                  index,
+                      (context, animation) => SizeTransition(
+                    sizeFactor: animation,
+                    child: _buildHistoryItem(pair, appState),
+                  ),
+                );
+              },
+              background: Container(
+                color: Colors.redAccent,
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Icon(Icons.delete, color: Colors.white),
               ),
+              secondaryBackground: Container(
+                color: Colors.redAccent,
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Icon(Icons.delete, color: Colors.white),
+              ),
+              child: _buildHistoryItem(pair, appState),
             ),
+
           );
         },
       ),
     );
   }
+
+  Widget _buildHistoryItem(WordPair pair, MyAppState appState) {
+    return Center(
+      child: TextButton.icon(
+        onPressed: () {
+          appState.toggleFavorite(pair);
+        },
+        icon: appState.favorites.contains(pair)
+            ? Icon(Icons.favorite, size: 12)
+            : SizedBox(),
+        label: Text(
+          pair.asLowerCase,
+          semanticsLabel: pair.asPascalCase,
+        ),
+      ),
+    );
+  }
+
 }
 
 

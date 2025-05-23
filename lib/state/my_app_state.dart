@@ -48,8 +48,23 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  void removeFavorite(WordPair pair) {
-    favorites.remove(pair);
+  // void removeFavorite(WordPair pair) {
+  //   favorites.remove(pair);
+  //
+  //   final keysToRemove = favoritesBox.keys.where((k) {
+  //     final saved = favoritesBox.get(k);
+  //     return saved?.toWordPair() == pair;
+  //   }).toList();
+  //
+  //   for (var key in keysToRemove) {
+  //     favoritesBox.delete(key);
+  //   }
+  //
+  //   notifyListeners();
+  // }
+
+  void removeFavorite(WordPair pair, {bool notify = true}) {
+    favorites.removeWhere((p) => p == pair);
 
     final keysToRemove = favoritesBox.keys.where((k) {
       final saved = favoritesBox.get(k);
@@ -60,8 +75,24 @@ class MyAppState extends ChangeNotifier {
       favoritesBox.delete(key);
     }
 
-    notifyListeners();
+    // Також видаляємо з history
+    history.removeWhere((p) => p == pair);
+
+    final historyKeysToRemove = historyBox.keys.where((k) {
+      final saved = historyBox.get(k);
+      return saved?.toWordPair() == pair;
+    }).toList();
+
+    for (var key in historyKeysToRemove) {
+      historyBox.delete(key);
+    }
+
+    if (notify) {
+      notifyListeners();
+    }
   }
+
+
 
   void addToHistory(WordPair pair) {
     history.insert(0, pair);
@@ -69,6 +100,42 @@ class MyAppState extends ChangeNotifier {
     historyListKey?.currentState?.insertItem(0);
     notifyListeners();
   }
+
+  // void removeFromHistory(WordPair pair) {
+  //   history.remove(pair);
+  //
+  //   // Видалити з Hive (знаходимо всі ключі, де значення дорівнює цій парі)
+  //   final keysToRemove = historyBox.keys.where((key) {
+  //     final saved = historyBox.get(key);
+  //     return saved?.toWordPair() == pair;
+  //   }).toList();
+  //
+  //   for (var key in keysToRemove) {
+  //     historyBox.delete(key);
+  //   }
+  //
+  //   notifyListeners();
+  // }
+
+  void removeFromHistory(WordPair pair) {
+    // Видалення з history
+    history.removeWhere((p) => p == pair);
+
+    // Видалення з Hive
+    final historyKeysToRemove = historyBox.keys.where((key) {
+      final saved = historyBox.get(key);
+      return saved?.toWordPair() == pair;
+    }).toList();
+    for (var key in historyKeysToRemove) {
+      historyBox.delete(key);
+    }
+
+    // Також видаляємо з favorites, якщо є
+    removeFavorite(pair, notify: false); // нижче буде пояснення про notify
+
+    notifyListeners();
+  }
+
 
   void clearHistory() {
     history.clear();
